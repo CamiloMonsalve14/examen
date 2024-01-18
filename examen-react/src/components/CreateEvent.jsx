@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect  } from 'react';
 import { CustomButton } from '../common/CustomButton';
 import { EventContext } from '../context/EventContext';
-import { Box } from '@chakra-ui/react';
+import { Box, Text, Stack } from '@chakra-ui/react';
 import {
     FormControl,
     FormLabel,
@@ -12,9 +12,10 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
 } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 const CreateEvent = () => {
-    const { dispatch } = useContext(EventContext);
+    const { state,dispatch } = useContext(EventContext);
     const [reservation, setReservation] = useState({
         id: '',
         name: '',
@@ -23,6 +24,17 @@ const CreateEvent = () => {
         numberOfPeople: 0,
         theme: '',
     });
+
+    useEffect(() => {
+        const storedEvents = localStorage.getItem('events');
+        if (storedEvents) {
+            dispatch({ type: 'SET_EVENTS', payload: JSON.parse(storedEvents) });
+        }
+    }, [dispatch]);
+
+    useEffect(() => {
+        localStorage.setItem('events', JSON.stringify(state.events));
+    }, [state.events]);
 
     const handleInputChange = (e) => {
         setReservation({ ...reservation, [e.target.name]: e.target.value });
@@ -45,7 +57,7 @@ const CreateEvent = () => {
     return (
         <Box
             p="4"
-            maxW="md"
+            maxW="50%"
             borderWidth="1px"
             borderRadius="lg"
             overflow="hidden"
@@ -53,16 +65,26 @@ const CreateEvent = () => {
             boxShadow="md"
             bgPosition='center'
             display="flex"
+            flexDirection="column"
             alignItems="center"
             justifyContent="center"
+            h="100vh"
         >
-            <Box 
-            bg="tomato" 
-            p="2px">
-                <h2 style={{ color: 'white' }}>Reservación de Eventos</h2>
-            </Box>
-            <form>
-                <FormControl isRequired mt="4">
+            <Text
+                color='black'
+                textTransform='uppercase'
+                textAlign='center'
+                fontWeight='light'
+                letterSpacing='3px'
+                overflow="hidden"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                maxWidth="100%"
+            >
+                <h1>Reservación de eventos</h1>
+            </Text>
+            <form style={{ width: '100%' }}>
+                <FormControl isRequired mt="4" w="100%">
                     <FormLabel> Id: </FormLabel>
                     <Input
                         placeholder='Id'
@@ -71,8 +93,8 @@ const CreateEvent = () => {
                         onChange={handleInputChange}
                     />
                 </FormControl>
-
-                <FormControl isRequired mt="4">
+    
+                <FormControl isRequired mt="4" w="100%">
                     <FormLabel> Nombre: </FormLabel>
                     <Input
                         placeholder='¿Quién realiza la reservación?'
@@ -81,8 +103,8 @@ const CreateEvent = () => {
                         onChange={handleInputChange}
                     />
                 </FormControl>
-
-                <FormControl isRequired mt="4">
+    
+                <FormControl isRequired mt="4" w="100%">
                     <FormLabel> Fecha: </FormLabel>
                     <Input
                         placeholder="Select Date and Time"
@@ -93,8 +115,8 @@ const CreateEvent = () => {
                         onChange={handleInputChange}
                     />
                 </FormControl>
-
-                <FormControl isRequired mt="4">
+    
+                <FormControl isRequired mt="4" w="100%">
                     <FormLabel> Lugar del Evento: </FormLabel>
                     <Input
                         placeholder='Lugar'
@@ -103,8 +125,8 @@ const CreateEvent = () => {
                         onChange={handleInputChange}
                     />
                 </FormControl>
-
-                <FormControl mt="4">
+    
+                <FormControl mt="4" w="100%">
                     <FormLabel>Numero de Invitados: </FormLabel>
                     <NumberInput
                         defaultValue={0}
@@ -121,14 +143,21 @@ const CreateEvent = () => {
                         </NumberInputStepper>
                     </NumberInput>
                 </FormControl>
-
-                <CustomButton mt="4" onClick={handleCreateEvent}>Crear Evento</CustomButton>
+    
+                <Stack direction="column" spacing={2} mt="4" w="40%">
+                    <CustomButton onClick={handleCreateEvent}>Crear Evento</CustomButton>
+                    <Link to="/EventList">
+                        <CustomButton>
+                            Ver Detalles del Evento
+                        </CustomButton>
+                    </Link>
+                </Stack>
+                
             </form>
         </Box>
     );
-};
 
-
+    }
 
 
 export default CreateEvent;

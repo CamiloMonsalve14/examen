@@ -1,41 +1,56 @@
 import { createContext, useReducer, useEffect } from 'react';
 
 const initialState = {
-    events: [],
+  events: [],
 };
 
 const eventReducer = (state, action) => {
-    switch (action.type) {
-        case 'ADD_EVENT':
-            return { events: [...state.events, action.payload] };
-        case 'GET_EVENTS':
-            return state;
-        case 'GET_EVENT':
-            return state;
-        case 'EDIT_EVENT':
-            return state;
-        case 'DELETE_EVENT':
-            return state;
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case 'ADD_EVENT':
+      const updatedEvents = [...state.events, action.payload];
+      localStorage.setItem('events', JSON.stringify(updatedEvents));
+      return { events: updatedEvents };
+
+    case 'GET_EVENTS':
+      const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+      return { events: storedEvents };
+
+    case 'GET_EVENT':
+      // Implementar lógica para obtener un evento específico si es necesario
+      return state;
+
+    case 'EDIT_EVENT':
+      const editedEvents = state.events.map((event) =>
+        event.id === action.payload.id ? { ...event, ...action.payload.changes } : event
+      );
+      localStorage.setItem('events', JSON.stringify(editedEvents));
+      return { events: editedEvents };
+
+    case 'DELETE_EVENT':
+      const remainingEvents = state.events.filter((event) => event.id !== action.payload.id);
+      localStorage.setItem('events', JSON.stringify(remainingEvents));
+      return { events: remainingEvents };
+
+    default:
+      return state;
+  }
 };
 
 const EventContext = createContext();
 
 const EventProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(eventReducer, initialState);
+  const [state, dispatch] = useReducer(eventReducer, initialState);
 
-    useEffect(() => {
-        const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
-        dispatch({ type: 'GET_EVENTS', payload: storedEvents });
-    }, []);
+  useEffect(() => {
+    dispatch({ type: 'GET_EVENTS' });
+  }, []);
 
-    return (
-        <EventContext.Provider value={{ state, dispatch }}>
-            {children}
-        </EventContext.Provider>
-    );
+  return (
+    <EventContext.Provider value={{ state, dispatch }}>
+      {children}
+    </EventContext.Provider>
+  );
 };
 
 export { EventContext, EventProvider };
+
