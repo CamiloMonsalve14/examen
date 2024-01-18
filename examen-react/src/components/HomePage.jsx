@@ -70,7 +70,7 @@ const HomePage = () => {
                                 bg: 'white'
                             }}
                         >
-                            Ver detalles de Eventos
+                            Lista de Eventos
                         </Button>
                     </Link>
                 </Stack>

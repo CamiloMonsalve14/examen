@@ -1,6 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { EventContext } from '../context/EventContext';
 import { CustomButton } from '../common/CustomButton';
+import {
+  Box,
+  Heading,
+  Text,
+  List,
+  ListItem,
+  Input,
+  NumberInput,
+  NumberInputField,
+  Button,
+  Center,
+  Flex
+} from '@chakra-ui/react';
 
 const EventList = () => {
   const { state, dispatch } = useContext(EventContext);
@@ -39,78 +52,129 @@ const EventList = () => {
   };
 
   return (
-    <div>
-      <h2>Lista de eventos</h2>
+    <Center
+    >
+    <Flex direction='column' alignItems='center'>
+    <Box 
+    textAlign="center" 
+    p={10}
+    boxShadow='outline' 
+     rounded='md' 
+     bg='white'
+
+    
+    >
+
+
+      <Heading as="h2" mb={4}>
+        Lista de eventos
+      </Heading>
       {events.length > 0 ? (
-        <ul>
+        <List>
           {events.map((event) => (
-            <li key={event.id}>
-              <strong>Id:</strong> {event.id} <br />
-              <strong>Nombre:</strong>{' '}
-              {editingEvent === event ? (
-                <input
-                  type="text"
-                  value={editedFields.name || ''}
-                  onChange={(e) => setEditedFields({ ...editedFields, name: e.target.value })}
-                />
-              ) : (
-                event.name
-              )}
+            <ListItem key={event.id} mb={4}>
+              <Text>
+                <strong>Id:</strong> {event.id}
+              </Text>
               <br />
-              <strong>Fecha:</strong>{' '}
-              {editingEvent === event ? (
-                <input
-                  type="text"
-                  value={editedFields.date || ''}
-                  onChange={(e) => setEditedFields({ ...editedFields, date: e.target.value })}
-                />
-              ) : (
-                event.date
-              )}
+              <Text>
+                <strong>Nombre:</strong>{' '}
+                {editingEvent === event ? (
+                  <Input
+                    type="text"
+                    value={editedFields.name || ''}
+                    onChange={(e) => setEditedFields({ ...editedFields, name: e.target.value })}
+                  />
+                ) : (
+                  event.name
+                )}
+              </Text>
               <br />
-              <strong>Lugar:</strong>{' '}
-              {editingEvent === event ? (
-                <input
-                  type="text"
-                  value={editedFields.place || ''}
-                  onChange={(e) => setEditedFields({ ...editedFields, place: e.target.value })}
-                />
-              ) : (
-                event.place
-              )}
+              <Text>
+                <strong>Fecha:</strong>{' '}
+                {editingEvent === event ? (
+                  <Input
+                    type="date"
+                    value={editedFields.date || ''}
+                    onChange={(e) => setEditedFields({ ...editedFields, date: e.target.value })}
+                  />
+                ) : (
+                  event.date
+                )}
+              </Text>
               <br />
-              <strong>Número de Asistentes:</strong>{' '}
-              {editingEvent === event ? (
-                <input
-                  type="number"
-                  value={editedFields.numberOfPeople || ''}
-                  onChange={(e) => setEditedFields({ ...editedFields, numberOfPeople: e.target.value })}
-                />
-              ) : (
-                event.numberOfPeople
-              )}
+              <Text>
+                <strong>Lugar:</strong>{' '}
+                {editingEvent === event ? (
+                  <Input
+                    type="place"
+                    value={editedFields.place || ''}
+                    onChange={(e) => setEditedFields({ ...editedFields, place: e.target.value })}
+                  />
+                ) : (
+                  event.place
+                )}
+              </Text>
+              <br />
+              <Text>
+                <strong>Número de Asistentes:</strong>{' '}
+                {editingEvent === event ? (
+                  <NumberInput
+                    value={editedFields.numberOfPeople || ''}
+                    onChange={(valueString) =>
+                      setEditedFields({ ...editedFields, numberOfPeople: valueString })
+                    }
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+                ) : (
+                  event.numberOfPeople
+                )}
+              </Text>
               <br />
               {editingEvent === event ? (
-                <div>
-                  <CustomButton onClick={handleSaveChanges}>Guardar Cambios</CustomButton>
-                  <CustomButton onClick={handleCancelEdit}>Cancelar</CustomButton>
-                </div>
+                <Box mt={4}>
+                  <Button colorScheme="teal" onClick={handleSaveChanges} mr={2}>
+                    Guardar Cambios
+                  </Button>
+                  <Button onClick={handleCancelEdit}>Cancelar</Button>
+                </Box>
               ) : (
-                <CustomButton onClick={() => handleEditEvent(event)}>Editar</CustomButton>
+                <Box mt={4}>
+                  <Button colorScheme="teal" onClick={() => handleEditEvent(event)} mr={2}>
+                    Editar
+                  </Button>
+                  <Button onClick={() => handleDeleteEvent(event.id)}>Eliminar</Button>
+                </Box>
               )}
-              <CustomButton onClick={() => handleDeleteEvent(event.id)}>Eliminar</CustomButton>
-            </li>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       ) : (
-        <p>No hay eventos en el momento</p>
+        <Text>No hay eventos en el momento</Text>
       )}
-      <CustomButton onClick={() => console.log('Refrescar eventos')}>Refrescar Eventos</CustomButton>
-    </div>
+      
+    </Box>
+    <Box
+    mt={4}
+    textAlign="center" 
+    p={4}
+    boxShadow='base'  
+    rounded='md' bg='white'
+    w='70%'
+    >
+    <CustomButton onClick={() => console.log('Refrescar eventos')} mt={4}>
+        Refrescar Eventos
+      </CustomButton>
+      </Box>
+      </Flex>
+    </Center>
   );
 };
 
 export default EventList;
+
+
 
 
 
